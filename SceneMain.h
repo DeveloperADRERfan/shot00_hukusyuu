@@ -2,6 +2,7 @@
 
 #include "player.h"
 #include "shot.h"
+#include "enemy.h"
 
 class SceneMain
 {
@@ -30,6 +31,8 @@ private:
 	int m_hShotGraphic;
 	// プレイヤー
 	Player m_player;
+	// 敵
+	Enemy m_enemy;
 	// ショット
 	Shot m_shot[kShotMax];
 };
