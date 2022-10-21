@@ -1,11 +1,16 @@
 #include "DxLib.h"
 #include "SceneMain.h"
 
-SceneMain::SceneMain()
+SceneMain::SceneMain():
+	m_hPlayerGraphic(-1),
+	m_hShotGraphic(-1),
+	m_player(),
+	m_enemy(),
+	m_shot()
 {
-	m_hPlayerGraphic = -1;
-	m_hShotGraphic = -1;
+	m_shot.resize(kShotMax);
 }
+
 SceneMain::~SceneMain()
 {
 
@@ -21,6 +26,7 @@ void SceneMain::init()
 	m_player.setHandle(m_hPlayerGraphic);
 	m_player.init();
 
+	m_enemy.setMain(this);
 	m_enemy.setHandle(m_hPlayerGraphic);
 	m_enemy.init();
 
@@ -45,6 +51,17 @@ void SceneMain::update()
 	for (auto& shot : m_shot)
 	{
 		shot.update();
+		if (shot.isEnemyCol(m_enemy))	// shotの持つisCol関数　どいつと当たるか　e_enemy
+		{
+			// 当たっている場合の処理
+			m_enemy.setExist(false);
+		}
+
+		if (shot.isPlayerCol(m_player))	// shotの持つisCol関数　どいつと当たるか　e_player
+		{
+			// 当たっている場合の処理
+			m_player.setExist(false);
+		}
 	}
 
 	// キー入力処理
@@ -67,15 +84,29 @@ void SceneMain::draw()
 }
 
 // ショットを撃つ
-bool SceneMain::createShot(Vec2 pos)
+bool SceneMain::createShot(Vec2 pos, bool isPlayer)
 {
 	for (auto& shot : m_shot)
 	{
 		if (!shot.isExist())
 		{
 			shot.start(pos);
+			Vec2 vec{ 8.0f, 0.0f };
+			if (!isPlayer)
+			{
+				vec.x *= -1.0f;
+			}
+			shot.setVec(vec);
+			shot.setPlayerShot(isPlayer);
+
 			return true;
 		}
+
 	}
 	return false;
+
+	for (auto& shot : m_shot)
+	{
+		if()
+	}
 }

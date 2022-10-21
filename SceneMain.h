@@ -3,6 +3,7 @@
 #include "player.h"
 #include "shot.h"
 #include "enemy.h"
+#include  <vector>
 
 class SceneMain
 {
@@ -21,7 +22,9 @@ public:
 	void draw();
 	
 	// ショットを撃つ
-	bool createShot(Vec2 pos);
+	bool createShot(Vec2 pos, bool isPlayer);
+	//bool createPlayerShot(Vec2 pos);
+	//bool createEnemyShot(Vec2 pos);
 
 private:
 	// ショットの最大数
@@ -37,5 +40,6 @@ private:
 	// 敵
 	Enemy m_enemy;
 	// ショット
-	Shot m_shot[kShotMax];
+//	Shot m_shot[kShotMax];
+	std::vector<Shot> m_shot;
 };

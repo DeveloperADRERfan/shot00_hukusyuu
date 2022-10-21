@@ -9,11 +9,16 @@ namespace
 	// X方向、Y方向の最大速度
 	constexpr float kSpeedMax = 8.0f;
 	constexpr float kAcc = 0.4f;
+
+	// ショットの生成間隔（フレーム数）
+	constexpr int kShotInterval = 8;
 }
 
 Player::Player()	:
 	m_pMain(nullptr),
 	m_handle(-1),
+	m_shotInterval(0),
+	m_isExist(false),
 	m_pos(),
 	m_vec()
 {
@@ -30,10 +35,17 @@ void Player::init()
 	m_pos.y = 100.0f;
 	m_vec.x = 0.0f;
 	m_vec.y = 0.0f;
+
+	m_isExist = true;
+	m_shotInterval = kShotInterval;
 }
 
 void Player::update()
 {
+	if (!m_isExist) return;
+	m_shotInterval--;
+	if (m_shotInterval < 0) m_shotInterval = 0;
+
 	// パッド(もしくはキーボード)からの入力を取得する
 	int padState = GetJoypadInputState(DX_INPUT_KEY_PAD1);
 	if (padState & PAD_INPUT_UP)
@@ -65,12 +77,12 @@ void Player::update()
 		m_vec.x *= 0.9f;
 	}
 	// キー入力処理
-	int padState = GetJoypadInputState(DX_INPUT_KEY_PAD1);
 	if (padState & PAD_INPUT_1)
 	{
-		if (m_pMain)
+		if ((m_pMain) && (m_shotInterval <= 0))
 		{
-			m_pMain->createShot(m_pos);
+			m_pMain->createShot(m_pos, true);
+			m_shotInterval = kShotInterval;
 		}
 	}
 	m_pos += m_vec;
@@ -78,5 +90,22 @@ void Player::update()
 
 void Player::draw()
 {
+	if (!m_isExist) return;
 	DrawGraphF(m_pos.x, m_pos.y, m_handle, true);
+}
+
+float Player::getColWidth()
+{
+	float tempX = 0;
+	float tempY = 0;
+	GetGraphSizeF(m_handle, &tempX, &tempY);
+	return tempX;
+}
+
+float Player ::getColHeight()
+{
+	float tempX = 0;
+	float tempY = 0;
+	GetGraphSizeF(m_handle, &tempX, &tempY);
+	return tempY;
 }
